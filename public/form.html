@@ -1,13 +1,44 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>File Upload</title>
 </head>
+
 <body>
-<form action="/profile" method="post" enctype="multipart/form-data">
-    <input type="file" name="avatar"/>
-    <input type="submit">
-</form>
+    <form id="uploadForm" enctype="multipart/form-data">
+        Izena: <input type="text" id="izena" name="izena"><br>
+        <input type="file" id="avatar" name="avatar">
+        <button type="submit">Bidali</button>
+    </form>
+
+    <script>
+        document.getElementById('uploadForm').addEventListener('submit', async (e) => {
+            e.preventDefault(); // Prevent default form submission
+
+            const formData = new FormData();
+            formData.append('izena', document.getElementById('izena').value);
+            formData.append('avatar', document.getElementById('avatar').files[0]);
+
+            try {
+                const response = await fetch('/profile', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    console.error('Error uploading file:', response.statusText);
+                    return;
+                }
+
+                const data = await response.json();
+                console.log("Zure izena:", data.izena, "Fitxategia: http://localhost:3000/uploads/" + data.fitxategia);
+            } catch (error) {
+                console.error('An error occurred:', error);
+            }
+        });
+    </script>
 </body>
+
 </html>
